@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VCpastry · Ishmael Mawusi Akaboa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --gold:       #F5C842;
+      --gold-dim:   #c49c25;
+      --bg:         #080808;
+      --bg2:        #111111;
+      --bg3:        #1a1a1a;
+      --text:       #E4E4E4;
+      --muted:      #6b6b6b;
+      --border:     #222222;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s, opacity 0.3s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(245, 200, 66, 0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, width 0.3s, height 0.3s;
+    }
+
+    .font-display { font-family: 'Playfair Display', serif; }
+    .font-mono    { font-family: 'DM Mono', monospace; }
+    .font-body    { font-family: 'DM Sans', sans-serif; }
+    .text-gold   { color: var(--gold); }
+    .bg-gold     { background: var(--gold); }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9990; opacity: 0.35;
+    }
+
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(8,8,8,0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-link {
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color 0.25s;
+      font-family: 'DM Mono', monospace;
+    }
+    .nav-link:hover { color: var(--gold); }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.92;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px; height: 1px;
+      background: var(--gold);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .project-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(245,200,66,0.1);
+      color: var(--gold);
+      border: 1px solid rgba(245,200,66,0.2);
+    }
+
+    .skill-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text);
+      transition: border-color 0.25s, color 0.25s, transform 0.25s;
+      background: var(--bg2);
+    }
+    .skill-pill:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: border-color 0.3s, transform 0.25s;
+    }
+    .feature-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--gold);
+      color: #000;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-gold:hover { background: #ffd84d; transform: scale(1.03); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    footer { border-top: 1px solid var(--border); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: #3ddc84;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="portfolio.html" class="font-mono text-xs tracking-widest text-gold">
+        ← Back to Portfolio
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <span class="nav-link">ISHMAEL.DEV</span>
+      </div>
+      <a href="portfolio.html#contact" class="btn-gold text-xs">
+        Contact Me ↗
+      </a>
+    </div>
+  </nav>
+
+  <!-- ═══════ HERO ═══════ -->
+  <section style="min-height:90vh; padding-top:6rem; position:relative; overflow:hidden;" class="flex flex-col justify-center">
+    <div style="position:absolute;top:-10%;right:-5%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 70%);pointer-events:none;"></div>
+
+    <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+      <div class="grid md:grid-cols-12 gap-8 items-end">
+        <div class="md:col-span-9">
+          <div class="hero-badge mb-8 reveal" style="transition-delay:0.1s">
+            <span class="dot"></span>
+            eCommerce · Laravel · Food & Beverage
+          </div>
+          <div class="reveal" style="transition-delay:0.2s;font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Project 03</div>
+          <h1 class="hero-title reveal" style="transition-delay:0.3s;">
+            VC<em>pastry</em>
+          </h1>
+          <p class="reveal" style="transition-delay:0.4s;color:var(--muted);font-size:1.15rem;line-height:1.8;max-width:48ch;margin-top:1.5rem;">
+            A bespoke eCommerce platform for African pastries — scaling from a local bakery to a full online storefront with multi-vendor access and seamless payment processing.
+          </p>
+          <div class="flex flex-wrap gap-3 mt-6 reveal" style="transition-delay:0.5s">
+            <span class="project-tag">Laravel</span>
+            <span class="project-tag">MySQL</span>
+            <span class="project-tag">Paystack</span>
+            <span class="project-tag">Tailwind CSS</span>
+            <span class="project-tag">Alpine.js</span>
+          </div>
+        </div>
+        <div class="md:col-span-3 reveal" style="transition-delay:0.5s">
+          <div style="border:1px solid var(--border);border-radius:12px;padding:1.5rem;background:var(--bg2);">
+            <div class="section-label mb-4" style="font-size:0.6rem;">Status</div>
+            <div style="display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:#3ddc84;">
+              <span style="width:8px;height:8px;background:#3ddc84;border-radius:50%;animation:pulse 2s infinite;display:inline-block;"></span>
+              Live
+            </div>
+            <hr style="border-color:var(--border);margin:1rem 0;"/>
+            <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;">
+              Client: VCpastry<br/>
+              Role: Full-Stack Developer
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ OVERVIEW ═══════ -->
+  <section style="padding:6rem 0;border-top:1px solid var(--border);background:var(--bg2);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-12 reveal">
+        <div class="md:col-span-5">
+          <div class="section-label mb-6">Overview</div>
+          <h2 class="section-title text-4xl mb-6">
+            eCommerce for<br/>
+            <em style="color:var(--gold);">African brands</em>
+          </h2>
+        </div>
+        <div class="md:col-span-7">
+          <p style="font-size:1.1rem;line-height:1.9;color:var(--text);margin-bottom:1.5rem;">
+            VCpastry is a custom-built eCommerce platform tailored for an African pastries brand. I architected and developed the entire solution — from product catalog management and shopping cart functionality to multi-auth vendor dashboards and payment integration with Paystack.
+          </p>
+          <p style="font-size:1.1rem;line-height:1.9;color:var(--muted);margin-bottom:1.5rem;">
+            The platform supports a growing food brand with order management, inventory tracking, customer accounts, and a responsive, mobile-first design that ensures a smooth shopping experience on any device — critical for the African market where mobile dominates.
+          </p>
+          <p style="font-size:1.1rem;line-height:1.9;color:var(--muted);">
+            Built with Laravel's robust backend, MySQL for reliable data storage, and Tailwind CSS for a clean, conversion-focused UI. The Paystack integration handles both card and Mobile Money payments seamlessly.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FEATURES ═══════ -->
+  <section style="padding:6rem 0;">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-4 reveal">Capabilities</div>
+      <h2 class="section-title text-5xl mb-12 reveal">Key <em style="color:var(--gold);">Features</em></h2>
+
+      <div class="grid md:grid-cols-3 gap-5 reveal" style="transition-delay:0.15s">
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">🛍️</div>
+          <h3 class="font-display text-xl font-bold mb-2">Product Catalog</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Rich product management with categories, variants, image galleries, inventory tracking, and advanced search.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">🛒</div>
+          <h3 class="font-display text-xl font-bold mb-2">Shopping Cart & Checkout</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Persistent cart, guest checkout, address management, and a streamlined payment flow with order confirmation.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">📦</div>
+          <h3 class="font-display text-xl font-bold mb-2">Order Management</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">End-to-end order lifecycle tracking from placement to delivery, with status updates and email notifications.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">👥</div>
+          <h3 class="font-display text-xl font-bold mb-2">Multi-Auth Dashboard</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Separate vendor and admin portals with custom permissions, sales analytics, and inventory management tools.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">💳</div>
+          <h3 class="font-display text-xl font-bold mb-2">Paystack Integration</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Card and Mobile Money payments via Paystack with automated receipt generation and transaction history.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">📱</div>
+          <h3 class="font-display text-xl font-bold mb-2">Mobile-First Design</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Responsive layout optimised for mobile shoppers with fast load times and touch-friendly navigation.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SCREENSHOTS ═══════ -->
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-4 reveal">Gallery</div>
+      <h2 class="section-title text-4xl mb-12 reveal">Project <em style="color:var(--gold);">Screenshots</em></h2>
+
+      <div class="grid md:grid-cols-2 gap-6 reveal" style="transition-delay:0.15s">
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🖼️</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Storefront Preview</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">1200 x 675 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🛒</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Shopping Cart View</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">1200 x 675 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">📱</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Mobile View</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">750 x 1334 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">📊</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Vendor Dashboard</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">1200 x 675 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ TECH STACK ═══════ -->
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-4 reveal">Architecture</div>
+      <h2 class="section-title text-4xl mb-12 reveal">Technical <em style="color:var(--gold);">Stack</em></h2>
+
+      <div class="grid md:grid-cols-4 gap-6 reveal" style="transition-delay:0.15s">
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Backend</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Laravel 10+</span>
+            <span class="skill-pill">PHP 8</span>
+            <span class="skill-pill">MySQL</span>
+            <span class="skill-pill">REST APIs</span>
+            <span class="skill-pill">Multi-auth</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Frontend</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Blade</span>
+            <span class="skill-pill">Tailwind CSS</span>
+            <span class="skill-pill">Alpine.js</span>
+            <span class="skill-pill">JavaScript</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Infrastructure</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Shared Hosting</span>
+            <span class="skill-pill">Nginx</span>
+            <span class="skill-pill">Cron Jobs</span>
+            <span class="skill-pill">File Storage</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Payments</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Paystack</span>
+            <span class="skill-pill">Mobile Money</span>
+            <span class="skill-pill">Card Payments</span>
+            <span class="skill-pill">Invoicing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ CTA ═══════ -->
+  <section style="padding:6rem 0;">
+    <div class="max-w-6xl mx-auto px-6 text-center reveal">
+      <h2 class="section-title text-4xl mb-6">Need a custom <em style="color:var(--gold);">eCommerce</em> platform?</h2>
+      <p style="color:var(--muted);font-size:1.05rem;line-height:1.8;max-width:48ch;margin:0 auto 2rem;">
+        I build tailored online stores for African businesses — from bakeries to fashion brands.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:ishmaelakaboa@gmail.com" class="btn-gold">Get in Touch ↗</a>
+        <a href="portfolio.html#projects" class="btn-outline">← Back to Projects</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ RELATED ═══════ -->
+  <section style="padding:5rem 0;background:var(--bg2);border-top:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-6 reveal">More Projects</div>
+      <div class="grid md:grid-cols-3 gap-5 reveal" style="transition-delay:0.15s">
+        <a href="efiepro.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="font-mono text-xs mb-2" style="color:var(--gold);letter-spacing:0.12em;">01</div>
+          <h3 class="font-display text-xl font-bold mb-1">EfiePro</h3>
+          <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;">Property management platform with multi-role access.</p>
+        </a>
+        <a href="flocksuite.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="font-mono text-xs mb-2" style="color:var(--gold);letter-spacing:0.12em;">02</div>
+          <h3 class="font-display text-xl font-bold mb-1">FlockSuite</h3>
+          <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;">Church management system with AI agents & MoMo.</p>
+        </a>
+        <a href="managesch.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="font-mono text-xs mb-2" style="color:var(--gold);letter-spacing:0.12em;">04</div>
+          <h3 class="font-display text-xl font-bold mb-1">ManageSch</h3>
+          <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;">Academic automation & school management.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2.5rem 0;">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="font-mono text-xs" style="color:var(--muted);letter-spacing:0.12em;">
+        © 2026 Ishmael Mawusi Akaboa · Rovi LLC · Haatso-Accra, Ghana
+      </div>
+      <div class="font-mono text-xs" style="color:var(--border);letter-spacing:0.1em;">
+        Built with Laravel, Go & ❤️ for Africa
+      </div>
+      <div class="flex items-center gap-1 font-mono text-xs" style="color:var(--muted);">
+        <span style="width:6px;height:6px;background:#3ddc84;border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:0.4rem;"></span>
+        Open to remote roles
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .feature-card, .skill-pill').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width  = '20px';
+        cursor.style.height = '20px';
+        cursorRing.style.width  = '56px';
+        cursorRing.style.height = '56px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width  = '12px';
+        cursor.style.height = '12px';
+        cursorRing.style.width  = '36px';
+        cursorRing.style.height = '36px';
+      });
+    });
+
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => io.observe(el));
+
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 100 + i * 100);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tripaddy · Ishmael Mawusi Akaboa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&amp;family=DM+Mono:wght@300;400;500&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --gold:       #F5C842;
+      --gold-dim:   #c49c25;
+      --bg:         #080808;
+      --bg2:        #111111;
+      --bg3:        #1a1a1a;
+      --text:       #E4E4E4;
+      --muted:      #6b6b6b;
+      --border:     #222222;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s, opacity 0.3s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(245, 200, 66, 0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, width 0.3s, height 0.3s;
+    }
+
+    .font-display { font-family: 'Playfair Display', serif; }
+    .font-mono    { font-family: 'DM Mono', monospace; }
+    .font-body    { font-family: 'DM Sans', sans-serif; }
+    .text-gold   { color: var(--gold); }
+    .bg-gold     { background: var(--gold); }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9990; opacity: 0.35;
+    }
+
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(8,8,8,0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-link {
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color 0.25s;
+      font-family: 'DM Mono', monospace;
+    }
+    .nav-link:hover { color: var(--gold); }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.92;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px; height: 1px;
+      background: var(--gold);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .project-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(245,200,66,0.1);
+      color: var(--gold);
+      border: 1px solid rgba(245,200,66,0.2);
+    }
+
+    .skill-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text);
+      transition: border-color 0.25s, color 0.25s, transform 0.25s;
+      background: var(--bg2);
+    }
+    .skill-pill:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: border-color 0.3s, transform 0.25s;
+    }
+    .feature-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--gold);
+      color: #000;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .btn-gold:hover { background: #ffd84d; transform: scale(1.03); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    footer { border-top: 1px solid var(--border); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="portfolio.html" class="font-mono text-xs tracking-widest text-gold">
+        ← Back to Portfolio
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <span class="nav-link">ISHMAEL.DEV</span>
+      </div>
+      <a href="portfolio.html#contact" class="btn-gold text-xs">
+        Contact Me ↗
+      </a>
+    </div>
+  </nav>
+
+  <section style="min-height:90vh; padding-top:6rem; position:relative; overflow:hidden;" class="flex flex-col justify-center">
+    <div style="position:absolute;top:-10%;right:-5%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 70%);pointer-events:none;"></div>
+
+    <div class="max-w-6xl mx-auto px-6 py-20 w-full">
+      <div class="grid md:grid-cols-12 gap-8 items-end">
+        <div class="md:col-span-9">
+          <div class="hero-badge mb-8 reveal" style="transition-delay:0.1s">
+            <span class="dot"></span>
+            Mobility · Laravel · Real-time
+          </div>
+          <div class="reveal" style="transition-delay:0.2s;font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1rem;">Project 05</div>
+          <h1 class="hero-title reveal" style="transition-delay:0.3s;">
+            Trip<em>addy</em>
+          </h1>
+          <p class="reveal" style="transition-delay:0.4s;color:var(--muted);font-size:1.15rem;line-height:1.8;max-width:48ch;margin-top:1.5rem;">
+            A ride-hailing application with real-time driver/rider matching, live GPS tracking via Google Maps, dynamic fare calculation, and integrated payment processing.
+          </p>
+          <div class="flex flex-wrap gap-3 mt-6 reveal" style="transition-delay:0.5s">
+            <span class="project-tag">Laravel</span>
+            <span class="project-tag">WebSockets</span>
+            <span class="project-tag">Google Maps API</span>
+            <span class="project-tag">Paystack</span>
+            <span class="project-tag">Redis</span>
+          </div>
+        </div>
+        <div class="md:col-span-3 reveal" style="transition-delay:0.5s">
+          <div style="border:1px solid var(--border);border-radius:12px;padding:1.5rem;background:var(--bg2);">
+            <div class="section-label mb-4" style="font-size:0.6rem;">Status</div>
+            <div style="display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gold);">
+              <span style="width:8px;height:8px;background:var(--gold);border-radius:50%;display:inline-block;"></span>
+              Developed
+            </div>
+            <hr style="border-color:var(--border);margin:1rem 0;"/>
+            <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;">
+              Type: Freelance Project<br/>
+              Role: Backend Developer
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:6rem 0;border-top:1px solid var(--border);background:var(--bg2);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-12 reveal">
+        <div class="md:col-span-5">
+          <div class="section-label mb-6">Overview</div>
+          <h2 class="section-title text-4xl mb-6">
+            Real-time ride<br/>
+            <em style="color:var(--gold);">hailing</em>
+          </h2>
+        </div>
+        <div class="md:col-span-7">
+          <p style="font-size:1.1rem;line-height:1.9;color:var(--text);margin-bottom:1.5rem;">
+            Tripaddy is a ride-hailing platform designed to connect riders with nearby drivers in real-time. I developed the full backend system on Laravel, implementing WebSocket-powered location tracking, dynamic driver/rider matching algorithms, and integrated payment processing via Paystack.
+          </p>
+          <p style="font-size:1.1rem;line-height:1.9;color:var(--muted);margin-bottom:1.5rem;">
+            The Google Maps API integration provides real-time GPS tracking for both drivers and riders, with live ETA calculations, route display, and fare estimation. The WebSocket layer ensures instant notifications for ride requests, driver acceptance, and trip status updates.
+          </p>
+          <p style="font-size:1.1rem;line-height:1.9;color:var(--muted);">
+            Redis handles session management and real-time location caching, ensuring low-latency performance even under concurrent user loads. The fare calculation engine factors in distance, time, and surge pricing dynamically.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:6rem 0;">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-4 reveal">Capabilities</div>
+      <h2 class="section-title text-5xl mb-12 reveal">Key <em style="color:var(--gold);">Features</em></h2>
+
+      <div class="grid md:grid-cols-3 gap-5 reveal" style="transition-delay:0.15s">
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">📍</div>
+          <h3 class="font-display text-xl font-bold mb-2">Live GPS Tracking</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Real-time location sharing via Google Maps API with live driver position updates, route visualization, and accurate ETA calculations.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">🔗</div>
+          <h3 class="font-display text-xl font-bold mb-2">Driver/Rider Matching</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Intelligent matching algorithm pairing riders with the nearest available drivers based on proximity, rating, and vehicle type.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">💰</div>
+          <h3 class="font-display text-xl font-bold mb-2">Dynamic Fare Calculation</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Real-time fare engine factoring in distance, estimated time, traffic conditions, and surge pricing with transparent cost breakdown.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">💳</div>
+          <h3 class="font-display text-xl font-bold mb-2">Payment Processing</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Integrated Paystack payments with support for card and Mobile Money, automated receipts, and driver payout management.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">📡</div>
+          <h3 class="font-display text-xl font-bold mb-2">WebSocket Notifications</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Instant push notifications for ride requests, driver acceptance, arrival alerts, and trip completion via Laravel WebSockets.</p>
+        </div>
+
+        <div class="feature-card">
+          <div style="font-size:1.5rem;margin-bottom:0.75rem;">⭐</div>
+          <h3 class="font-display text-xl font-bold mb-2">Rating and Review System</h3>
+          <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Post-ride ratings and reviews for both drivers and riders, building trust and maintaining service quality standards.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SCREENSHOTS ═══════ -->
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-4 reveal">Gallery</div>
+      <h2 class="section-title text-4xl mb-12 reveal">Project <em style="color:var(--gold);">Screenshots</em></h2>
+
+      <div class="grid md:grid-cols-2 gap-6 reveal" style="transition-delay:0.15s">
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">📍</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Live Map Tracking</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">1200 x 675 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🚗</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Ride Request Screen</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">1200 x 675 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">📱</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Mobile Rider View</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">750 x 1334 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg3);">
+          <div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:var(--bg);border-bottom:1px solid var(--border);">
+            <div style="text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">💳</div>
+              <div style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;">Payment & Receipt</div>
+              <div style="font-size:0.65rem;color:var(--border);margin-top:0.3rem;">1200 x 675 · PNG</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-4 reveal">Architecture</div>
+      <h2 class="section-title text-4xl mb-12 reveal">Technical <em style="color:var(--gold);">Stack</em></h2>
+
+      <div class="grid md:grid-cols-4 gap-6 reveal" style="transition-delay:0.15s">
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Backend</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Laravel</span>
+            <span class="skill-pill">PHP</span>
+            <span class="skill-pill">MySQL</span>
+            <span class="skill-pill">REST APIs</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Real-time</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">WebSockets</span>
+            <span class="skill-pill">Redis</span>
+            <span class="skill-pill">Google Maps API</span>
+            <span class="skill-pill">Geolocation</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Frontend</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Blade</span>
+            <span class="skill-pill">JavaScript</span>
+            <span class="skill-pill">Tailwind CSS</span>
+            <span class="skill-pill">Alpine.js</span>
+          </div>
+        </div>
+        <div>
+          <div class="font-mono text-xs mb-5" style="color:var(--gold);letter-spacing:0.18em;text-transform:uppercase;">Payments</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="skill-pill">Paystack</span>
+            <span class="skill-pill">Mobile Money</span>
+            <span class="skill-pill">Cron Jobs</span>
+            <span class="skill-pill">DigitalOcean</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:6rem 0;">
+    <div class="max-w-6xl mx-auto px-6 text-center reveal">
+      <h2 class="section-title text-4xl mb-6">Need a <em style="color:var(--gold);">ride-hailing</em> backend?</h2>
+      <p style="color:var(--muted);font-size:1.05rem;line-height:1.8;max-width:48ch;margin:0 auto 2rem;">
+        I build scalable, real-time transportation platforms with payment integration.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:ishmaelakaboa@gmail.com" class="btn-gold">Get in Touch ↗</a>
+        <a href="portfolio.html#projects" class="btn-outline">← Back to Projects</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:5rem 0;background:var(--bg2);border-top:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="section-label mb-6 reveal">More Projects</div>
+      <div class="grid md:grid-cols-3 gap-5 reveal" style="transition-delay:0.15s">
+        <a href="efiepro.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="font-mono text-xs mb-2" style="color:var(--gold);letter-spacing:0.12em;">01</div>
+          <h3 class="font-display text-xl font-bold mb-1">EfiePro</h3>
+          <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;">Property management platform with multi-role access.</p>
+        </a>
+        <a href="vcpastry.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="font-mono text-xs mb-2" style="color:var(--gold);letter-spacing:0.12em;">03</div>
+          <h3 class="font-display text-xl font-bold mb-1">VCpastry</h3>
+          <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;">eCommerce platform for African pastries.</p>
+        </a>
+        <a href="booking-nyonderma.html" class="feature-card" style="text-decoration:none;color:inherit;">
+          <div class="font-mono text-xs mb-2" style="color:var(--gold);letter-spacing:0.12em;">06</div>
+          <h3 class="font-display text-xl font-bold mb-1">Booking.Nyonderma</h3>
+          <p style="color:var(--muted);font-size:0.85rem;line-height:1.6;">Beauty treatment booking and scheduling platform.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2.5rem 0;">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="font-mono text-xs" style="color:var(--muted);letter-spacing:0.12em;">
+        © 2026 Ishmael Mawusi Akaboa · Rovi LLC · Haatso-Accra, Ghana
+      </div>
+      <div class="font-mono text-xs" style="color:var(--border);letter-spacing:0.1em;">
+        Built with Laravel, Go and ❤️ for Africa
+      </div>
+      <div class="flex items-center gap-1 font-mono text-xs" style="color:var(--muted);">
+        <span style="width:6px;height:6px;background:#3ddc84;border-radius:50%;animation:pulse 2s infinite;display:inline-block;margin-right:0.4rem;"></span>
+        Open to remote roles
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      cursorRing.style.left = rx + 'px';
+      cursorRing.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .feature-card, .skill-pill').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width  = '20px';
+        cursor.style.height = '20px';
+        cursorRing.style.width  = '56px';
+        cursorRing.style.height = '56px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width  = '12px';
+        cursor.style.height = '12px';
+        cursorRing.style.width  = '36px';
+        cursorRing.style.height = '36px';
+      });
+    });
+
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => io.observe(el));
+
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 100 + i * 100);
+    });
+  </script>
+
+</body>
+</html>
